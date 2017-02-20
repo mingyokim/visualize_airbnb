@@ -1,12 +1,17 @@
 import sqlite3
 import csv
 import urllib.request
+import urllib.parse
 
-conn = sqlite3.connect('listingsALL.db')
+conn = sqlite3.connect('listingsTrentino.db')
 conn.isolation_level = None
 
-url = "http://data.insideairbnb.com/united-states/ny/new-york-city/2016-12-03/visualisations/listings.csv"
-response = urllib.request.urlopen(url)
+url = 'http://data.insideairbnb.com/italy/trentino-alto-adige-sdtirol/trentino/2015-10-12/visualisations/listings.csv'
+response = None
+try:
+	response = urllib.request.urlopen(url)
+except:
+	response = urllib.request.urlopen(urllib.parse.quote(url))
 cr = csv.DictReader(response.read().decode('utf-8').splitlines())
 
 def create_table():
