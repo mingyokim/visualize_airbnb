@@ -1,0 +1,74 @@
+<html>
+        <head>
+                <style>
+                        #map {
+                                height: 400px;
+                                width: 100%;
+                        }
+                </style>
+      		<script src="js/jquery-3.1.1.min.js"></script>
+	<head>
+        <body>
+                <div id="map"></div>
+		<script>
+                        function initMap() {
+				var newYork = new google.maps.LatLng(40.730610, -73.935242);
+
+				map = new google.maps.Map(document.getElementById('map'), {
+					center: newYork,
+					zoom: 10,
+					mapTypeId: 'satellite'
+				});
+				map.data.loadGeoJson('http://data.insideairbnb.com/united-states/ny/new-york-city/2016-12-03/visualisations/neighbourhoods.geojson');
+				map.data.setStyle({fillOpacity: 0.01, strokeWeight: 1.75, strokeOpacity: 1, strokeColor: 'black'});
+				/*
+				$(document).ready(function() {
+					$.ajax({
+						type: "GET",
+						async: false,
+						url: "http://localhost:8000/listings.csv",
+						dataType: "text",
+						success: function(response) {
+							 data=response
+						}
+					});
+				});
+				*/
+				var url = "http://data.insideairbnb.com/united-states/ny/new-york-city/2016-12-03/visualisations/listings.csv";	
+				var heatMapData = [];
+				var parsed;
+				Papa.parse(url, 
+				{	 
+					download:true,
+					header: true,
+					complete: function(results) {
+							parsed = results;
+							console.log(parsed);
+							var objList = parsed['data'];
+							for(i = 0; i < objList.length; i++) {
+								  var latitude = objList[i]['latitude'];
+								  var longitude = objList[i]['longitude'];
+			 					  var obj = new google.maps.LatLng(latitude, longitude);
+								  heatMapData.push(obj);
+			 
+							  }
+			 
+			 
+							  var heatmap = new google.maps.visualization.HeatmapLayer({
+								  data: heatMapData,
+								  radius: 7,
+								  maxIntensity:25
+							  });
+							  heatmap.setMap(map);
+						}	
+				});
+			}
+                </script>
+		<script type="text/javascript" src="js/jquery-csv/src/jquery.csv.js"></script>
+                <script type="text/javascript" src="js/PapaParse/papaparse.min.js"></script>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+                <script async defer
+                        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDqCxxQq6OgSX6tQhihd-DfaBkyzR88vU8&callback=initMap&libraries=visualization">
+		</script>
+        </body>
+</html>
